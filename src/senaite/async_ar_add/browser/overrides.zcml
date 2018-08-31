@@ -1,0 +1,14 @@
+<configure
+        xmlns="http://namespaces.zope.org/zope"
+        xmlns:browser="http://namespaces.zope.org/browser"
+        i18n_domain="senaite.async_ar_add">
+
+  <browser:page
+      for="*"
+      name="ajax_ar_add"
+      class="senaite.async_ar_add.browser.analysisrequest.add2.ajaxAnalysisRequestAddView"
+      permission="zope.Public"
+      layer="bika.lims.interfaces.IBikaLIMS"
+  />
+
+</configure>

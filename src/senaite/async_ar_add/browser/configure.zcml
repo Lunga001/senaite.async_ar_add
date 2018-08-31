@@ -4,18 +4,4 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="senaite.async_ar_add">
 
-  <!-- Set overrides folder for Just-a-Bunch-Of-Templates product -->
-  <include package="z3c.jbot" file="meta.zcml" />
-  <browser:jbot
-      directory="overrides"
-      layer="senaite.async_ar_add.interfaces.ISenaiteAsyncArAddLayer"
-      />
-
-  <!-- Publish static files -->
-  <plone:static
-      name="senaite.async_ar_add"
-      type="plone"
-      directory="static"
-      />
-
 </configure>
