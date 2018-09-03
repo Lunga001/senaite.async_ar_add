@@ -17,7 +17,7 @@
   <include package=".extenders" />
   <genericsetup:registerProfile
       name="default"
-      title="senaite.async_ar_add"
+      title="SENAITE AR ADD"
       directory="profiles/default"
       description="Installs the senaite.async_ar_add add-on."
       provides="Products.GenericSetup.interfaces.EXTENSION"
