@@ -4,4 +4,21 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="senaite.async_ar_add">
 
+  <browser:page
+      for="*"
+      name="async_create_analysisrequest"
+      class="senaite.async_ar_add.utils.Async_AR_Utils"
+      attribute="async_create_analysisrequest"
+      permission="zope.Public"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+  <browser:page
+      for="*"
+      name="queue_count"
+      class="senaite.async_ar_add.utils.Async_AR_Utils"
+      attribute="queue_count"
+      permission="zope.Public"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
 </configure>

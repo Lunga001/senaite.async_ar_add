@@ -1,7 +1,8 @@
+import json
 from bika.lims import api
 from bika.lims.browser.analysisrequest.add2 import \
     ajaxAnalysisRequestAddView as ajaxARAV
-
+from bika.lims import logger
 from zope.publisher.interfaces import IPublishTraverse
 from zope.interface import implements
 
@@ -13,6 +14,9 @@ from bika.lims.utils import tmpID
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims import bikaMessageFactory as _
 
+from zope.component import queryUtility
+from collective.taskqueue.interfaces import ITaskQueue
+from base64 import b64encode
 
 class ajaxAnalysisRequestAddView(ajaxARAV):
     implements(IPublishTraverse)
@@ -21,7 +25,6 @@ class ajaxAnalysisRequestAddView(ajaxARAV):
         """Submit & create the ARs
         """
 
-        import pdb; pdb.set_trace()
         # Get AR required fields (including extended fields)
         fields = self.get_ar_fields()
 
@@ -151,6 +154,33 @@ class ajaxAnalysisRequestAddView(ajaxARAV):
             return {'errors': errors}
 
         # Process Form
+        bika_setup = api.get_bika_setup()
+        max_ars_async = bika_setup.MaxARsBeforeAsync
+        task_queue = queryUtility(ITaskQueue, name='ar-create')
+        if task_queue is not None and len(valid_records) > max_ars_async:
+            path = [i for i in self.context.getPhysicalPath()]
+            path.append('async_create_analysisrequest')
+            path = '/'.join(path)
+            params = {'records': json.dumps(valid_records),
+                      # TODO: 'attachments': json.dumps(attachments),
+                      'attachments': json.dumps({}),
+                      }
+            logger.info('Queue Task: path=%s' % path)
+            logger.debug('Que Task: path=%s, params=%s, attachments=%s' % (
+                         path, params, attachments))
+            task_id = task_queue.add(path, method='POST', params=params)
+
+            level = "info"
+            if len(valid_records) == 0:
+                message = _('No Analysis Requests could be queued for creation.')
+                level = "error"
+            elif len(valid_records) > 1:
+                message = _('${ARs} Analysis requests were queue for creation.',
+                            mapping={'ARs': len(valid_records)})
+            else:
+                message = _('Analysis request was queued for creation.')
+            return {'success': message}
+
         ARs = OrderedDict()
         for n, record in enumerate(valid_records):
             client_uid = record.get("Client")

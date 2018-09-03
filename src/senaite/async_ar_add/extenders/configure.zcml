@@ -1,0 +1,9 @@
+<configure
+        xmlns="http://namespaces.zope.org/zope"
+        i18n_domain="ace.lims">
+
+    <include package="archetypes.schemaextender"/>
+
+    <adapter name='senaite.async_add_ar' factory=".bikasetup.BikaSetupSchemaExtender" />
+    <adapter name='senaite.async_add_ar' factory=".bikasetup.BikaSetupSchemaModifier" />
+</configure>
