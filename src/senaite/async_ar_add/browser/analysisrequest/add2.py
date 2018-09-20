@@ -179,6 +179,7 @@ class ajaxAnalysisRequestAddView(ajaxARAV):
                             mapping={'ARs': len(valid_records)})
             else:
                 message = _('Analysis request was queued for creation.')
+            self.context.plone_utils.addPortalMessage(message, level)
             return {'success': message}
 
         ARs = OrderedDict()
