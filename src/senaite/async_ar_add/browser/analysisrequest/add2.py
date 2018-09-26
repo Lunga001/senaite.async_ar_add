@@ -16,7 +16,7 @@ from bika.lims import bikaMessageFactory as _
 
 from zope.component import queryUtility
 from collective.taskqueue.interfaces import ITaskQueue
-from base64 import b64encode
+
 
 class ajaxAnalysisRequestAddView(ajaxARAV):
     implements(IPublishTraverse)
@@ -158,12 +158,31 @@ class ajaxAnalysisRequestAddView(ajaxARAV):
         max_ars_async = bika_setup.MaxARsBeforeAsync
         task_queue = queryUtility(ITaskQueue, name='ar-create')
         if task_queue is not None and len(valid_records) > max_ars_async:
+            ar_attachments = {}
+            for n_rec, record in enumerate(valid_records):
+                client_uid = record.get("Client")
+                client = self.get_object_by_uid(client_uid)
+
+                if not client:
+                    raise RuntimeError("No client found")
+
+                _attachments = []
+                for attachment in attachments.get(n_rec, []):
+                    if not attachment.filename:
+                        continue
+                    att = _createObjectByType("Attachment", client, tmpID())
+                    att.setAttachmentFile(attachment)
+                    att.processForm()
+                    _attachments.append(att.UID())
+
+                ar_attachments[n_rec] = _attachments
+
             path = [i for i in self.context.getPhysicalPath()]
             path.append('async_create_analysisrequest')
             path = '/'.join(path)
             params = {'records': json.dumps(valid_records),
                       # TODO: 'attachments': json.dumps(attachments),
-                      'attachments': json.dumps({}),
+                      'attachments': json.dumps(ar_attachments),
                       }
             logger.info('Queue Task: path=%s' % path)
             logger.debug('Que Task: path=%s, params=%s, attachments=%s' % (

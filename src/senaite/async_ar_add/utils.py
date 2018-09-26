@@ -48,13 +48,9 @@ class Async_AR_Utils(BrowserView):
             ARs.append(ar.getId())
 
             _attachments = []
-            for attachment in attachments.get(n, []):
-                if not attachment.filename:
-                    continue
-                att = _createObjectByType("Attachment", self.context, tmpID())
-                att.setAttachmentFile(attachment)
-                att.processForm()
-                _attachments.append(att)
+            for att_uid in attachments.get(str(n), []):
+                attachment = api.get_object_by_uid(att_uid)
+                _attachments.append(attachment)
             if _attachments:
                 ar.setAttachment(_attachments)
 
