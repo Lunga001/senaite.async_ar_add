@@ -2,8 +2,6 @@
 """Init and utils."""
 
 from zope.i18nmessageid import MessageFactory
-from bika.lims.permissions import ADD_CONTENT_PERMISSIONS
-from bika.lims.permissions import ADD_CONTENT_PERMISSION
 from Products.Archetypes.atapi import process_types, listTypes
 from Products.CMFCore.utils import ContentInit
 
@@ -25,11 +23,11 @@ def initialize(context):
     allTypes = zip(content_types, constructors, ftis)
     for atype, constructor, fti in allTypes:
         kind = "%s: Add %s" % (PROJECTNAME, atype.portal_type)
-        perm = ADD_CONTENT_PERMISSIONS.get(
-            atype.portal_type, ADD_CONTENT_PERMISSION)
+        perm_name = "Add{}".format(atype.portal_type)
+        perm = getattr(permissions, perm_name, AddPortalContent)
         ContentInit(kind,
                     content_types=(atype,),
                     permission=perm,
-                    extra_constructors=(constructor,),
-                    fti=fti,
+                    extra_constructors=(constructor, ),
+                    fti=ftis,
                     ).initialize(context)

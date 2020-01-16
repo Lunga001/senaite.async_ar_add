@@ -1,15 +1,14 @@
 from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaModifier
-from ace.lims import aceMessageFactory as _
-# from bika.lims.fields import ExtReferenceField, ExtStringField
-# from bika.lims.browser.widgets import ReferenceWidget as bikaReferenceWidget
 from bika.lims.fields import ExtIntegerField
 from bika.lims.interfaces import IBikaSetup
-from Products.Archetypes.public import *
 from Products.Archetypes.atapi import IntegerWidget
-# from Products.CMFCore import permissions
 from zope.component import adapts
 from zope.interface import implements
+from zope.i18nmessageid import MessageFactory
+
+
+_ = MessageFactory('senaite.async_ar_add')
 
 
 class BikaSetupSchemaExtender(object):
